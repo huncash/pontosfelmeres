@@ -43,7 +43,7 @@ function customerText(config, lead, id) {
     '',
     `Ha néhány munkanapon belül nem jelentkezünk, írjon a ${config.contactEmail} címre, és tüntesse fel a hivatkozási számot.`,
     '',
-    config.companyShortName,
+    config.siteName,
     config.siteUrl,
   ].join('\n');
 }

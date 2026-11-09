@@ -138,8 +138,8 @@ function renderHome({ formHtml }) {
   <section class="section section-alt">
     <div class="wrap trust">
       <p class="kicker">Ki végzi</p>
-      <h2>A megoldást az ADP-TOP Kft. mérnöki csapata biztosítja.</h2>
-      <p>A megkeresést, a helyszíni felmérést és az egyeztetett dokumentációt ugyanez a cég viszi végig. Az oldal nem készít automatikus árat, nem köt szerződést, és nem ígér hatósági záradékot. A székhely: 1116 Budapest, Híradó utca 29.</p>
+      <h2>A felmérést ugyanaz a csapat viszi végig.</h2>
+      <p>A megkeresést, a helyszíni felmérést és az egyeztetett dokumentációt egy folyamatban kezeljük. Az oldal nem készít automatikus árat, nem köt szerződést, és nem ígér hatósági záradékot.</p>
     </div>
   </section>
   <section class="section">
@@ -388,9 +388,9 @@ function renderContact({ formHtml, config }) {
     <div class="contact-grid">
       <div>
         <h2>Elérhetőség</h2>
-        <p>${esc(config.companyShortName)}<br>${esc(config.companySeat)}</p>
         ${email ? `<p><a href="mailto:${esc(email)}">${esc(email)}</a></p>` : ''}
         ${phone}
+        ${phoneHref ? '<p>Telefonon hétfőtől péntekig, 8:00 és 19:00 között hívhat.</p>' : ''}
         <p>Az e-mailben elég a település, az ingatlan típusa és a tervező kérése. Ha rajzot is csatolna, inkább az egyeztetés után kérjük: az űrlap nem fogad fájlt.</p>
       </div>
       <div id="ajanlat">
@@ -429,7 +429,7 @@ function renderArticle(article) {
     <p class="kicker">Cikk · ${article.published}</p>
     <h1>${article.title}</h1>
     ${article.html}
-    <p class="byline">Szerző: ADP-TOP Kft. mérnöki csapata. A szöveg tájékoztató, nem ajánlat.</p>
+    <p class="byline">A szöveg tájékoztató, nem ajánlat.</p>
     ${ctaBand()}
     <h2>Kapcsolódó jegyzetek</h2>
     <ul>${more}</ul>
@@ -450,7 +450,7 @@ function renderPrivacy(config) {
     Cégjegyzékszám: ${esc(config.companyRegNumber)}<br>
     Adószám: ${esc(config.companyTaxId)}<br>
     ${email ? `E-mail: <a href="mailto:${esc(email)}">${esc(email)}</a>` : ''}
-    ${config.contactPhone ? `<br>Telefon: ${esc(config.contactPhone)}` : ''}</p>
+    ${config.contactPhone ? `<br>Telefon: ${esc(config.contactPhone)} · hétfőtől péntekig, 8:00–19:00` : ''}</p>
     <h2>Milyen adatot rögzítünk?</h2>
     <p>Ha ajánlatot kér, a nevét, e-mail címét, telefonszámát, a települést, az ingatlan típusát, a becsült alapterületet, a tervezett munka típusát, a kért dokumentációt, a tervező elérhetőségét, ha megadja, a kívánt határidőt és a megjegyzését. Rögzítjük a beküldés időpontját, a forrásoldal címét, a forrásdomaint, a kampány- és UTM-paramétereket, ha a link tartalmazta őket, valamint a hozzájárulás tényét. Az ajánlatkéréshez IP-címet nem tárolunk az adatbázisban.</p>
     <h2>Miért és milyen jogalapon?</h2>
@@ -478,7 +478,7 @@ function renderImpressum(config) {
   return `
   <article class="prose wrap">
     <p class="kicker">Impresszum</p>
-    <h1>Impresszum</p>
+    <h1>Impresszum</h1>
     <p>A pontosfelmeres.hu oldalt az alábbi gazdasági társaság üzemelteti. Az oldal a meglévő állapotfelmérés bemutatására és ajánlatkérésre szolgál. Online fizetés és automatikus szerződéskötés nincs rajta.</p>
     <h2>Üzemeltető</h2>
     <p>${esc(config.companyLegalName)}<br>
@@ -487,16 +487,14 @@ function renderImpressum(config) {
     Cégjegyzékszám: ${esc(config.companyRegNumber)}<br>
     Nyilvántartó bíróság: ${esc(config.companyCourt)}<br>
     Adószám: ${esc(config.companyTaxId)}<br>
-    Közösségi adószám: ${esc(config.companyEuTaxId)}<br>
-    Főtevékenység a cégjegyzék szerint: ${esc(config.companyActivity)}</p>
+    Közösségi adószám: ${esc(config.companyEuTaxId)}</p>
     <h2>Elérhetőség</h2>
     <p>${email ? `E-mail: <a href="mailto:${esc(email)}">${esc(email)}</a>` : ''}
-    ${config.contactPhone ? `<br>Telefon: ${esc(config.contactPhone)}` : ''}</p>
+    ${config.contactPhone ? `<br>Telefon: ${esc(config.contactPhone)} · hétfőtől péntekig, 8:00–19:00` : ''}</p>
     <h2>Tárhely</h2>
     ${hosting}
     <h2>A tartalomról</h2>
     <p>A szövegek a szolgáltatás kereteit írják le. Az ajánlat mindig a konkrét feladatra szól, írásban. Az oldalon szereplő sematikus ábrák helyőrzők, nem elvégzett felmérések. A pontosság, a lefedettség és a kizárások a vállalt feladat részei, nem általános ígéretek. Az oldal nem nyújt földhivatali, hatósági záradékolási vagy tervezői felelősségvállalási szolgáltatást.</p>
-    <p>Kapcsolódó mérnöki felület, ettől az oldaltól független címen: <a href="https://bim.vrgo.hu">bim.vrgo.hu</a>.</p>
   </article>`;
 }
 
@@ -597,7 +595,7 @@ const PAGES = {
     path: '/adatvedelem',
     title: 'Adatkezelési tájékoztató | Pontosfelmérés',
     description:
-      'Hogyan kezeli az ADP-TOP Kft. az ajánlatkérés adatait a pontosfelmeres.hu oldalon. Nincs hírlevél és nincs követőkód.',
+      'Hogyan kezeli a pontosfelmeres.hu az ajánlatkérés adatait. Nincs hírlevél és nincs követőkód.',
     crumb: 'Adatvédelem',
   },
   impressum: {

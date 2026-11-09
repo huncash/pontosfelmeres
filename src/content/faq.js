@@ -19,7 +19,7 @@ const FAQ = [
   },
   {
     q: 'Ki végzi a felmérést?',
-    a: 'A megoldást az ADP-TOP Kft. mérnöki csapata biztosítja. A megkeresést, a helyszíni munkát és az egyeztetett dokumentációt ugyanaz a cég viszi. Az oldal nem közvetít névtelen alvállalkozói ígéretet.',
+    a: 'A megkeresést, a helyszíni munkát és az egyeztetett dokumentációt ugyanaz a csapat viszi végig. Az oldal nem közvetít névtelen alvállalkozói ígéretet.',
   },
   {
     q: 'Ez földhivatali vagy hatósági felmérés?',

@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const { esc, jsonScript, safeEmail, telHref } = require('./util');
 
 const NAV = [
@@ -13,19 +15,21 @@ function organizationLd(config) {
   return {
     '@type': 'Organization',
     '@id': `${config.siteUrl}/#szervezet`,
-    name: config.companyShortName,
-    legalName: config.companyLegalName,
+    name: config.siteName,
     url: config.siteUrl,
     email: safeEmail(config.contactEmail) || undefined,
     telephone: config.contactPhone || undefined,
-    taxID: config.companyTaxId,
-    vatID: config.companyEuTaxId,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: config.companySeat,
-      addressCountry: 'HU',
-    },
   };
+}
+
+function footerLogo() {
+  const file = path.join(__dirname, '..', 'public', 'images', 'adp-top-logo.png');
+  if (!fs.existsSync(file)) return '';
+  const buf = fs.readFileSync(file);
+  const png = buf.length >= 24 && buf.toString('ascii', 1, 4) === 'PNG';
+  const width = png ? buf.readUInt32BE(16) : 120;
+  const height = png ? buf.readUInt32BE(20) : 48;
+  return `<img class="footer-logo" src="/images/adp-top-logo.png" width="${width}" height="${height}" alt="ADP-TOP">`;
 }
 
 function professionalServiceLd(config) {
@@ -40,7 +44,6 @@ function professionalServiceLd(config) {
     telephone: config.contactPhone || undefined,
     email: safeEmail(config.contactEmail) || undefined,
     areaServed: { '@type': 'Country', name: 'Magyarország' },
-    address: organizationLd(config).address,
     provider: { '@id': `${config.siteUrl}/#szervezet` },
     knowsAbout: [
       'épületfelmérés',
@@ -85,7 +88,7 @@ function articleLd(config, article) {
     datePublished: article.published,
     dateModified: article.published,
     mainEntityOfPage: `${config.siteUrl}${article.path}`,
-    author: { '@type': 'Organization', name: config.companyShortName },
+    author: { '@type': 'Organization', name: config.siteName },
     publisher: { '@id': `${config.siteUrl}/#szervezet` },
   };
 }
@@ -157,11 +160,11 @@ function layout({
   <a class="skip" href="#tartalom">Ugrás a tartalomra</a>
   <header class="site-header">
     <div class="wrap utility">
-      <p>${esc(config.companyShortName)} · meglévő állapotfelmérés</p>
+      <p>Meglévő állapotfelmérés</p>
       <p class="utility-links">
         <a href="/gyik">GYIK</a>
         <a href="/kapcsolat">Kapcsolat</a>
-        ${phoneHref ? `<a href="${esc(phoneHref)}">${esc(config.contactPhone)}</a>` : ''}
+        ${phoneHref ? `<a href="${esc(phoneHref)}">${esc(config.contactPhone)}</a><span>H–P 8:00–19:00</span>` : ''}
       </p>
     </div>
     <div class="wrap header-main">
@@ -195,7 +198,6 @@ function layout({
       <section>
         <h2>${esc(config.siteName)}</h2>
         <p>Meglévő épület felmérése, a tervezővel egyeztetett dokumentációval. Az ajánlat a feladat ismeretében készül.</p>
-        <p>${esc(config.companyShortName)}<br>${esc(config.companySeat)}</p>
       </section>
       <section>
         <h2>Szolgáltatás</h2>
@@ -219,18 +221,22 @@ function layout({
         </ul>
       </section>
       <section>
-        <h2>Cég</h2>
+        <h2>Jogi információk</h2>
         <ul>
           ${email ? `<li><a href="mailto:${esc(email)}">${esc(email)}</a></li>` : ''}
-          ${phoneHref ? `<li><a href="${esc(phoneHref)}">${esc(config.contactPhone)}</a></li>` : ''}
+          ${phoneHref ? `<li><a href="${esc(phoneHref)}">${esc(config.contactPhone)}</a> · H–P 8:00–19:00</li>` : ''}
           <li><a href="/adatvedelem">Adatkezelési tájékoztató</a></li>
           <li><a href="/impresszum">Impresszum</a></li>
-          <li><a href="https://bim.vrgo.hu">Kapcsolódó mérnöki felület: bim.vrgo.hu</a></li>
+          <li><a href="https://bim.vrgo.hu">bim.vrgo.hu</a></li>
         </ul>
       </section>
     </div>
-    <div class="wrap legal-line">
-      <p>© ${new Date().getFullYear()} ${esc(config.companyShortName)} Az oldal tájékoztat és ajánlatot fogad. Nem köt szerződést és nem számít árat.</p>
+    <div class="wrap footer-base">
+      ${footerLogo()}
+      <p>2016–2026 (R) Minden jog fenntartva.</p>
+      <a href="/">pontosfelmeres.hu</a>
+      <a href="/kapcsolat#ajanlat">Írjon nekünk</a>
+      <p>Telefonon: H–P 8:00–19:00</p>
     </div>
   </footer>
   <script src="/js/site.js?v=${esc(config.assetVersion)}" defer></script>

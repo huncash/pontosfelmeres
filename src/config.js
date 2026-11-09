@@ -105,7 +105,7 @@ function loadConfig() {
       !PLACEHOLDER_TOKENS.has(adminToken.toLowerCase()),
     sessionSecret,
     retentionMonths: Number.parseInt(env('RETENTION_MONTHS', '24'), 10) || 24,
-    assetVersion: '1',
+    assetVersion: '3',
   };
 }
 

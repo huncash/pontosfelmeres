@@ -72,11 +72,26 @@ test('a főoldal a kért főcímet és a három szolgáltatást mutatja', async 
   assert.match(body, /Lakás és családi ház felmérés/);
   assert.match(body, /Iroda, üzlet és kisebb kereskedelmi egység/);
   assert.match(body, /Felújítás vagy átépítés előtti állapotfelmérés/);
-  assert.match(body, /A megoldást az ADP-TOP Kft\. mérnöki csapata biztosítja\./);
+  assert.match(body, /A felmérést ugyanaz a csapat viszi végig\./);
+  assert.match(body, /2016–2026 \(R\) Minden jog fenntartva\./);
+  assert.match(body, /href="\/">pontosfelmeres\.hu/);
+  assert.match(body, /href="\/kapcsolat#ajanlat">Írjon nekünk/);
+  assert.match(body, /Telefonon: H–P 8:00–19:00/);
+  assert.doesNotMatch(body, /ADP-TOP Kft/);
+  assert.doesNotMatch(body, /Híradó/);
   assert.match(body, /property="og:title"/);
   assert.match(body, /application\/ld\+json/);
   assert.doesNotMatch(body, /garantált pontosság/);
   assert.doesNotMatch(body, /nulla hiba/);
+});
+
+test('az impresszumban megmarad az üzemeltető, a főtevékenységi sor nincs', async () => {
+  const { body } = await text('/impresszum');
+  assert.match(body, /ADP-TOP Kereskedelmi és Szolgáltató Kft\./);
+  assert.match(body, /Híradó utca 29/);
+  assert.doesNotMatch(body, /4712/);
+  assert.doesNotMatch(body, /Iparcikk jellegű vegyes kiskereskedelem/);
+  assert.doesNotMatch(body, /független címen/);
 });
 
 test('a nyilvános oldalak válaszolnak', async () => {
