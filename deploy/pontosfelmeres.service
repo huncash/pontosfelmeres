@@ -1,0 +1,18 @@
+[Unit]
+Description=Pontosfelmeres.hu – meglévő állapotfelmérés
+After=network.target
+
+[Service]
+Type=simple
+User=pontosfelmeres
+Group=pontosfelmeres
+WorkingDirectory=/var/www/site-6_newdew
+EnvironmentFile=/var/www/site-6_newdew/.env
+ExecStart=/usr/bin/node src/server.js
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+{
+  "name": "Pontosfelmérés",
+  "short_name": "Pontosfelmérés",
+  "lang": "hu",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#e7eee9",
+  "theme_color": "#0c4a3e"
+}

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Sematikus alaprajz">
+  <rect width="640" height="420" fill="#f3f6f4"/>
+  <g stroke="#c5d5cc" stroke-width="1">
+    <path d="M40 20H600M40 60H600M40 100H600M40 140H600M40 180H600M40 220H600M40 260H600M40 300H600M40 340H600M40 380H600"/>
+    <path d="M40 20V400M80 20V400M120 20V400M160 20V400M200 20V400M240 20V400M280 20V400M320 20V400M360 20V400M400 20V400M440 20V400M480 20V400M520 20V400M560 20V400M600 20V400"/>
+  </g>
+  <g fill="none" stroke="#0c4a3e" stroke-width="3">
+    <path d="M90 70H470V330H90Z"/>
+    <path d="M250 70V210H470"/>
+    <path d="M90 210H250"/>
+  </g>
+  <path d="M300 210H360" stroke="#f3f6f4" stroke-width="8"/>
+  <path d="M300 210c0 28 20 48 48 48" fill="none" stroke="#0c4a3e" stroke-width="1.6"/>
+  <path d="M150 330H210" stroke="#f3f6f4" stroke-width="8"/>
+  <path d="M150 330c28 0 48-18 48-42" fill="none" stroke="#0c4a3e" stroke-width="1.6"/>
+  <g fill="none" stroke="#8a4630" stroke-width="1.2">
+    <path d="M90 48H470"/>
+    <path d="M90 48v-8M470 48v-8"/>
+    <path d="M48 70V330"/>
+    <path d="M48 70h-8M48 330h-8"/>
+  </g>
+  <g font-family="Consolas, monospace" font-size="13" fill="#3e5249">
+    <text x="250" y="42">760</text>
+    <text x="16" y="210">540</text>
+    <text x="120" y="150">nappali</text>
+    <text x="300" y="150">konyha</text>
+    <text x="130" y="270">szoba</text>
+  </g>
+</svg>
