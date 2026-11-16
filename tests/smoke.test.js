@@ -67,12 +67,16 @@ async function text(pathname) {
 test('a főoldal a kért főcímet és a három szolgáltatást mutatja', async () => {
   const { response, body } = await text('/');
   assert.equal(response.status, 200);
-  assert.match(body, /<h1>Tervezéshez használható meglévő állapotfelmérés<\/h1>/);
-  assert.match(body, /Pontfelhő, alaprajz és a tervezőjével egyeztetett dokumentáció\./);
+  assert.match(body, /<h1>Épületfelmérés a tervezéshez<\/h1>/);
+  assert.match(body, /A meglévő állapot felmérése, a tervezővel egyeztetett pontfelhővel, alaprajzzal vagy metszettel\./);
+  assert.match(body, /href="#ajanlat">Ajánlatot kérek/);
+  assert.match(body, /href="#mit-kapok">Mit kapok\?/);
+  assert.match(body, /Ezek külön kimenetek\./);
   assert.match(body, /Lakás és családi ház felmérés/);
   assert.match(body, /Iroda, üzlet és kisebb kereskedelmi egység/);
   assert.match(body, /Felújítás vagy átépítés előtti állapotfelmérés/);
-  assert.match(body, /A felmérést ugyanaz a csapat viszi végig\./);
+  assert.match(body, /Térfelmérés épületről, tervezővel egyeztetett dokumentációval\./);
+  assert.doesNotMatch(body, /pont\/másodperc|képpont\/másodperc|millió pont|modell-előkészítés|Teszt Anna|másnapi átad/);
   assert.match(body, /2016–2026 \(R\) Minden jog fenntartva\./);
   assert.match(body, /href="\/">pontosfelmeres\.hu/);
   assert.match(body, /href="\/kapcsolat#ajanlat">Írjon nekünk/);
@@ -83,6 +87,27 @@ test('a főoldal a kért főcímet és a három szolgáltatást mutatja', async 
   assert.match(body, /application\/ld\+json/);
   assert.doesNotMatch(body, /garantált pontosság/);
   assert.doesNotMatch(body, /nulla hiba/);
+});
+
+test('a főoldal belső linkjei élnek, és a szöveg a kért keretben marad', async () => {
+  const pagesToScan = ['/', '/arak', '/epulet-felmeres'];
+  const hrefs = new Set();
+  for (const pathname of pagesToScan) {
+    const { body } = await text(pathname);
+    for (const match of body.matchAll(/href="(\/[^"#?]*)/g)) {
+      if (match[1] && match[1] !== '/') hrefs.add(match[1]);
+    }
+  }
+  for (const href of hrefs) {
+    const { response } = await text(href);
+    assert.equal(response.status, 200, href);
+  }
+  const { body } = await text('/');
+  const marketing = body.split('id="ajanlat"')[0].replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<[^>]+>/g, ' ');
+  const words = marketing.split(/\s+/).filter(Boolean);
+  assert.ok(words.length >= 350 && words.length <= 550, `szószám: ${words.length}`);
+  assert.match(body, /action="\/ajanlat"/);
+  assert.doesNotMatch(body, /alaprajz, metszet és pontfelhő/);
 });
 
 test('az impresszumban megmarad az üzemeltető, a főtevékenységi sor nincs', async () => {

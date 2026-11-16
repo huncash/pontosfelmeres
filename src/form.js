@@ -99,8 +99,8 @@ function ctaBand() {
       <p>Írja meg a települést, az ingatlan típusát és azt, amit a tervező kér. Ha ez még nincs tisztázva, az ajánlat előtt ezt egyeztetjük. Az űrlap nem ad azonnali árat.</p>
     </div>
     <div class="actions">
-      <a class="btn" href="/kapcsolat#ajanlat">Kérjen ajánlatot</a>
-      <a class="btn btn-ghost" href="/mintak">Nézze meg, mit kap pontosan</a>
+      <a class="btn" href="/kapcsolat#ajanlat">Ajánlatot kérek</a>
+      <a class="btn btn-ghost" href="/#mit-kapok">Mit kapok?</a>
     </div>
   </aside>`;
 }

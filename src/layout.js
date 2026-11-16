@@ -185,7 +185,7 @@ function layout({
       <label class="nav-button" for="nav-toggle">Menü</label>
       <nav class="menu" aria-label="Főmenü">
         ${nav}
-        <a class="menu-cta" href="/kapcsolat#ajanlat">Kérjen ajánlatot</a>
+        <a class="menu-cta" href="/kapcsolat#ajanlat">Ajánlatot kérek</a>
       </nav>
     </div>
   </header>

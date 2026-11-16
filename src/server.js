@@ -176,7 +176,7 @@ function createApp(options = {}) {
       nonce: res.locals.nonce,
       meta: pages.PAGES.home,
       body,
-      jsonLd: [graph([organizationLd(config), professionalServiceLd(config), faqLd(pages.HOME_FAQ)])],
+      jsonLd: [graph([organizationLd(config), professionalServiceLd(config)])],
     }));
   });
 
