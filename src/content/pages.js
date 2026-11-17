@@ -2,68 +2,56 @@ const { esc, safeEmail, telHref } = require('../util');
 const { FAQ, faqHtml } = require('./faq');
 const { ARTICLES } = require('./articles');
 const { ctaBand } = require('../form');
-const { rateHtml } = require('./instrument');
 
 function renderHome({ formHtml }) {
-  const rates = rateHtml();
   return `
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="kicker">Építészeknek, belsőépítészeknek, felújítóknak</p>
-        <h1>Épületfelmérés a tervezéshez</h1>
-        <p class="lede">A meglévő állapot felmérése, a tervezővel egyeztetett pontfelhővel, alaprajzzal vagy metszettel.</p>
+        <p class="kicker">Lakás, ház, iroda, üzlethelyiség</p>
+        <h1>3D épületfelmérés felújításhoz és tervezéshez</h1>
+        <p class="lede">Épületeket mérünk fel 3D lézerszkennerrel. A felmérésből pontfelhő készül, és ha kéri, alaprajz, metszet vagy homlokzati rajz.</p>
+        <p>A pontfelhő a felmért felületek pontokból álló digitális képe. A tervező ebből látja a teret, és ebből készülhet a rajz is.</p>
         <div class="actions">
           <a class="btn" href="#ajanlat">Ajánlatot kérek</a>
-          <a class="btn btn-ghost" href="#mit-kapok">Mit kapok?</a>
+          <a class="btn btn-ghost" href="#mit-kapok">Mit adunk át?</a>
         </div>
-        <p class="note">Már az ajánlat előtt tisztázzuk, mire lesz szüksége a tervezőnek, és pontosan mit adunk át.</p>
       </div>
       <aside class="hero-panel">
-        <p class="kicker">Átadás</p>
-        <h2>A lista a feladaté, nem egy közös csomagé.</h2>
+        <p class="kicker">Átadott anyag</p>
+        <h2>Amit a felmérésből kérhet</h2>
         <ul class="checklist">
-          <li>Pontfelhő, ha a tervező ebből dolgozik</li>
-          <li>Alaprajz vagy metszet, ha ezt rendelik meg</li>
-          <li>Megjegyzés arról, hol nem látott be a mérés</li>
-          <li>Ami nincs a listán, nem része a munkának</li>
+          <li>Pontfelhő a felmért épületről</li>
+          <li>Alaprajz a felújításhoz vagy a tervezéshez</li>
+          <li>Metszet vagy homlokzati rajz, ha ezt kéri</li>
         </ul>
-        <figure class="plate">
-          <img src="/images/plate-plan.svg" width="640" height="420" alt="Sematikus alaprajzi helyőrző. Nem egy elvégzett felmérés rajza.">
-          <figcaption><span>Helyőrző</span> Ide kerül a jóváhagyott projektábra.</figcaption>
-        </figure>
       </aside>
-    </div>
-  </section>
-  <section class="statement">
-    <div class="wrap">
-      <p>Meglévő állapotfelmérés a tervezővel egyeztetett átadással.</p>
     </div>
   </section>
   <section class="section">
     <div class="wrap">
       <div class="section-head">
         <p class="kicker">Szolgáltatás</p>
-        <h2>Milyen feladatra kérhető</h2>
+        <h2>Milyen épületet mérünk fel</h2>
       </div>
       <div class="cards">
         <article class="card">
           <p class="card-index">01</p>
-          <h3>Lakás és családi ház felmérés</h3>
-          <p>A tervezés a meglévő falakból, nyílásokból és szinteltérésekből indul. Az ajánlat előtt eldől, hogy pontfelhő vagy rajz kell.</p>
-          <a href="/epulet-felmeres">Épületfelmérés részletesen</a>
+          <h3>Lakás és ház</h3>
+          <p>A meglévő falakat, nyílásokat és szinteket mérjük fel, hogy a felújítás vagy a terv ebből indulhasson.</p>
+          <a href="/epulet-felmeres">Épületfelmérés</a>
         </article>
         <article class="card">
           <p class="card-index">02</p>
-          <h3>Iroda, üzlet és kisebb kereskedelmi egység felmérés</h3>
-          <p>A belmagasság, a pillér és a portál a bérlemény felújításának kiinduló adata. A helyszíni idő a hozzáféréshez igazodik.</p>
-          <a href="/epulet-felmeres">Mire terjed ki a felmérés</a>
+          <h3>Iroda és üzlethelyiség</h3>
+          <p>A bérlemény vagy az üzlet mai terét mérjük fel átalakítás és tervezés előtt.</p>
+          <a href="/epulet-felmeres">Iroda és üzlet felmérése</a>
         </article>
         <article class="card">
           <p class="card-index">03</p>
-          <h3>Felújítás vagy átépítés előtti állapotfelmérés</h3>
-          <p>Bontás vagy válaszfalmozgatás előtt a meglévő geometria kell. A rejtett szerkezetet és a statikát ez a felmérés nem vizsgálja.</p>
-          <a href="/felujitas-alapfelmeres">Felújítás előtti alapfelmérés</a>
+          <h3>Felújítás előtt</h3>
+          <p>A mai épületet mérjük fel, hogy a tervezés ne egy régi vagy emlékezetből rajzolt alaprajzból induljon.</p>
+          <a href="/felujitas-alapfelmeres">Felújítás előtti felmérés</a>
         </article>
       </div>
     </div>
@@ -71,65 +59,52 @@ function renderHome({ formHtml }) {
   <section class="section section-alt" id="mit-kapok">
     <div class="wrap">
       <div class="section-head">
-        <p class="kicker">Kimenet</p>
-        <h2>Mit kap pontosan?</h2>
-        <p>Ezek külön kimenetek. Az ajánlat csak azt a tételt tartalmazza, amit ehhez a feladathoz kérnek. A pontfelhő nem jár automatikusan a rajzhoz, a rajz nem jár automatikusan a pontfelhőhöz.</p>
+        <p class="kicker">Átadott anyag</p>
+        <h2>Mit adunk át?</h2>
       </div>
       <div class="cards">
         <article class="card">
-          <h3>Felmérés és pontfelhő</h3>
-          <p>Kimenet: a meglévő tér digitális rögzítése, előre egyeztetett állományátadással.</p>
-          <p>Mire használható: a tervező látja belőle a látható geometriát, a ferde síkot és a lépcsőt.</p>
-          <p>Külön egyeztetés: a fájlformátum, a helyiségek listája, és hogy készül-e belőle rajz.</p>
+          <h3>Pontfelhő</h3>
+          <p>A 3D lézerszkenner a felmért épületrész felületeit pontfelhőként rögzíti. Ezt az anyagot a tervező a saját programjában tudja megnyitni.</p>
         </article>
         <article class="card">
-          <h3>Felmérés és rajzi dokumentáció</h3>
-          <p>Kimenet: a megrendelt alaprajzok, metszetek vagy homlokzati rajzok.</p>
-          <p>Mire használható: szerkeszthető kiindulás felújításhoz vagy átépítéshez.</p>
-          <p>Külön egyeztetés: melyik rajz készül, milyen metszéssel, és melyik épületrész marad ki.</p>
+          <h3>Rajz, ha kéri</h3>
+          <p>Az ajánlatban meghatározott feladat szerint készülhet alaprajz, metszet vagy homlokzati rajz. A rajz a felmért épületből indul.</p>
         </article>
       </div>
-      <p>A műszer adatgyűjtése, a pontfelhő pontossága és a rajzi dokumentáció vállalása nem ugyanaz. A takart felületet nem adjuk át mért adatként. Nem ígérjük minden felület teljes rögzítését, a hibamentességet, és azt sem, hogy pótmérés biztosan nem kell.</p>
-      ${rates}
-      <p class="section-link"><a href="/mintak">Minta kimenetek és ami kimarad belőlük</a></p>
+      <p>A megrendelt felmérés és dokumentáció pontos tartalmát az ajánlatban rögzítjük.</p>
+      <p class="section-link"><a href="/mintak">Átadott anyagok részletesebben</a></p>
     </div>
   </section>
   <section class="section">
     <div class="wrap">
       <div class="section-head">
         <p class="kicker">Menet</p>
-        <h2>Hogyan dolgozunk</h2>
+        <h2>Hogyan készül a felmérés</h2>
       </div>
       <ol class="steps">
         <li>
           <span>01</span>
-          <h3>Projekt és kimenet egyeztetése</h3>
-          <p>Megnézzük, pontfelhő, alaprajz vagy metszet kell-e, és mi marad ki.</p>
+          <h3>Megbeszéljük a feladatot</h3>
+          <p>Tisztázzuk, melyik épületet vagy épületrészt kell felmérni, és pontfelhőt, rajzot vagy mindkettőt kér-e.</p>
         </li>
         <li>
           <span>02</span>
-          <h3>Helyszíni terepi felmérés</h3>
-          <p>A vállalt területet mérjük fel. A helyszíni idő a tagoltságtól és a hozzáféréstől függ.</p>
+          <h3>Felmérjük a helyszínen</h3>
+          <p>Az egyeztetett épületrészt 3D lézerszkennerrel mérjük fel.</p>
         </li>
         <li>
           <span>03</span>
-          <h3>Feldolgozás és minőség-ellenőrzés</h3>
-          <p>A kért állományt a helyszíni adathoz viszonyítjuk. A hiányt jelöljük.</p>
+          <h3>Elkészítjük az anyagot</h3>
+          <p>Összeáll a pontfelhő, és ha kérte, az alaprajz, a metszet vagy a homlokzati rajz.</p>
         </li>
         <li>
           <span>04</span>
-          <h3>Átadás a megbeszélt formátumban</h3>
-          <p>A feldolgozás és az átadás külön idő a helyszíni felméréstől. Ami nincs a listán, nem kerül bele.</p>
+          <h3>Átadjuk</h3>
+          <p>Azt az anyagot adjuk át, amit az ajánlatban meghatároztunk.</p>
         </li>
       </ol>
-      <p class="section-link"><a href="/folyamat">A négy lépés részletesen</a> · <a href="/cikkek">Jegyzetek a felmérés előtt</a></p>
-    </div>
-  </section>
-  <section class="section section-alt">
-    <div class="wrap trust">
-      <p class="kicker">Határ</p>
-      <h2>Térfelmérés épületről, tervezővel egyeztetett dokumentációval.</h2>
-      <p>Nem tárgyszkennelés, nem alkatrész-digitalizálás, nem reverse engineering és nem gyártási méretellenőrzés. Földhivatali záradékot és hatósági hitelesítést nem adunk. Az oldal nem készít automatikus árat, és nem köt szerződést.</p>
+      <p class="section-link"><a href="/folyamat">A felmérés menete</a> · <a href="/cikkek">Tudnivalók felújítás előtt</a></p>
     </div>
   </section>
   <section class="section section-alt" id="ajanlat">
@@ -137,7 +112,7 @@ function renderHome({ formHtml }) {
       <div>
         <p class="kicker">Ajánlatkérés</p>
         <h2>Ajánlatot kérek</h2>
-        <p>Az űrlap nem számít árat, és nem ígér 24 órás ajánlatot. A települést, a területet és a kért kimenetet rögzíti. Ha ez kevés a tisztázáshoz, előbb visszakérdezünk. A további kérdések a <a href="/gyik">GYIK</a> oldalon vannak.</p>
+        <p>Írja meg a nevét, az e-mail címét, és hogy mit szeretne felméretni. A többi adatot akkor töltse ki, ha már tudja.</p>
       </div>
       ${formHtml}
     </div>
@@ -227,27 +202,14 @@ function renderDesigners() {
 function renderSamples() {
   return `
   <article class="prose wrap">
-    <p class="kicker">Minták</p>
-    <h1>Minta kimenetek, nem kitalált referenciák</h1>
-    <p class="lede">A keretekben sematikus helyőrzők vannak. Valós projektábrát csak a megbízó hozzájárulásával teszünk ide. Addig a kimenet szerkezetét írjuk le, ügyfélnév és idézett vélemény nélkül.</p>
-    <p>Egy felmérés attól lesz összehasonlítható, hogy a tartalomjegyzéke előre olvasható. Az alábbi három példa illusztráció. Nem ajánlat, nem ár, és nem egy konkrét ház adata. Ha a feladat ettől eltér, az ajánlat a tervező listáját követi, nem ezeket a bekezdéseket.</p>
+    <p class="kicker">Átadott anyagok</p>
+    <h1>Átadott anyagok</h1>
+    <p class="lede">A pontfelhő, az alaprajz, a metszet és a homlokzati rajz külön anyag. Azt készítjük el, amit az ajánlatban meghatároztunk. Itt nincs kitalált referenciaépület.</p>
     <h2>1. Pontfelhő</h2>
-    <figure class="plate">
-      <img src="/images/plate-cloud.svg" width="640" height="420" alt="Sematikus pontfelhő egy helyiség sarkáról. Helyőrző ábra.">
-      <figcaption><span>Helyőrző</span> Ide kerülhet egy jóváhagyott pontfelhő-részlet.</figcaption>
-    </figure>
     <p>Átadáskor a megbeszélt csereformátumú állomány és egy rövid kísérőszöveg készül: melyik álláspontokból látszik a tér, hol takart a bútor, hol zajos a felület. A pontfelhő a látható felületek lenyomata. Nem tartalmaz falobjektumot, méretláncot és helyiségpecsétet, hacsak a feladat ezek szerkesztését külön nem kéri.</p>
-    <h2>2. 2D alaprajz és metszet</h2>
-    <figure class="plate">
-      <img src="/images/plate-plan.svg" width="640" height="420" alt="Sematikus lakásalaprajz méretvonalakkal. Helyőrző ábra.">
-      <figcaption><span>Helyőrző</span> Ide kerülhet egy jóváhagyott alaprajzi kivágat.</figcaption>
-    </figure>
+    <h2>2. Alaprajz, metszet és homlokzati rajz</h2>
     <p>A rajzi minta egy lakás érintett helyiségeire: alaprajz egy rögzített metszési magassággal, nyílások a látható tok szerint, belmagasság a kért helyiségekben, és egy metszet a nappali meg a nedveshelyiség irányában, ha ezt a tervező kérte. A fájl PDF és szerkeszthető rajz, ha az ajánlat így szól. A metszet síkját nem a feldolgozó választja ki utólag.</p>
-    <h2>3. Tervezővel egyeztetett dokumentációs csomag</h2>
-    <figure class="plate">
-      <img src="/images/plate-pack.svg" width="640" height="420" alt="Három sematikus lap: pontfelhő, alaprajz, megjegyzés. Helyőrző ábra.">
-      <figcaption><span>Helyőrző</span> A csomag tartalomjegyzéke az ajánlatban születik.</figcaption>
-    </figure>
+    <h2>3. Pontfelhő és rajz együtt</h2>
     <p>Egy lehetséges lakásfelújítási lista, ha a tervező pont ezt kéri:</p>
     <ul>
       <li>minden érintett helyiség alaprajza,</li>
@@ -290,7 +252,7 @@ function renderPricing() {
   return `
   <article class="prose wrap">
     <p class="kicker">Árak</p>
-    <h1>Árazási logika, nem azonnali díj</h1>
+    <h1>Árak és ajánlatkérés</h1>
     <p class="lede">Az oldalon nincs árkalkulátor és nincs sávos „ettől a négyzetméteráron” ígéret. A díj egy adott átadási listához tartozik. A lista nélkül a szám félrevezető lenne.</p>
     <p>Két hasonló méretű lakás felmérése nem azonos munka, ha az egyiken egy alaprajz kell, a másikon pedig pontfelhő, két metszet és egyeztetés a tervező irodájával. Ezért az ajánlatkérés nem árat ad vissza, hanem elindítja a tisztázást. Ha az adatok ehhez eleve kevesek, előbb kérdezünk.</p>
     <h2>Mitől függ az ajánlat?</h2>
@@ -347,7 +309,7 @@ function renderContact({ formHtml, config }) {
   <article class="prose wrap">
     <p class="kicker">Kapcsolat</p>
     <h1>Kapcsolat és ajánlatkérés</h1>
-    <p class="lede">Írjon az űrlapon, vagy hívjon. Az első válasz a feladat tisztázása, nem egy automatikus díj.</p>
+    <p class="lede">Írjon az űrlapon, vagy hívjon. A név, az e-mail és a felmérendő épület elég az első megkereséshez.</p>
     <div class="contact-grid">
       <div>
         <h2>Elérhetőség</h2>
@@ -457,7 +419,7 @@ function renderImpressum(config) {
     <h2>Tárhely</h2>
     ${hosting}
     <h2>A tartalomról</h2>
-    <p>A szövegek a szolgáltatás kereteit írják le. Az ajánlat mindig a konkrét feladatra szól, írásban. Az oldalon szereplő sematikus ábrák helyőrzők, nem elvégzett felmérések. A pontosság, a lefedettség és a kizárások a vállalt feladat részei, nem általános ígéretek. Az oldal nem nyújt földhivatali, hatósági záradékolási vagy tervezői felelősségvállalási szolgáltatást.</p>
+    <p>A szövegek a szolgáltatás kereteit írják le. Az ajánlat mindig a konkrét feladatra szól, írásban. Az oldal nem mutat kitalált referenciaépületet. A pontosság és a felmért épületrész az ajánlatban rögzített feladat részei, nem általános ígéretek. Az oldal nem nyújt földhivatali, hatósági záradékolási vagy tervezői felelősségvállalási szolgáltatást.</p>
   </article>`;
 }
 
@@ -469,7 +431,7 @@ function renderThanks(ref) {
     <p class="kicker">Ajánlatkérés</p>
     <h1>Rögzítettük az ajánlatkérését</h1>
     ${refLine}
-    <p>Átnézzük a megadott adatokat. Ha a tervezői kimenethez vagy a helyszínhez hiányzik valami, visszakérdezünk. Írásos ajánlatot ezután küldünk. Az űrlap nem készített árat, és nem jött létre szerződés.</p>
+    <p>Átnézzük a megadott adatokat, és írásos ajánlatot küldünk. Az elküldés még nem szerződés.</p>
     <p>Ha néhány munkanapon belül nem jelentkezünk, írjon a kapcsolati e-mail címre, és tüntesse fel a hivatkozási számot.</p>
     <p><a class="btn" href="/">Vissza a főoldalra</a></p>
   </article>`;
@@ -493,87 +455,111 @@ function renderNotFound() {
 const PAGES = {
   home: {
     path: '/',
-    title: 'Épületfelmérés a tervezéshez | Pontosfelmérés',
+    title: '3D épületfelmérés, alaprajz és pontfelhő | Pontosfelmérés',
     description:
-      'Meglévő állapotfelmérés a tervezővel egyeztetett pontfelhővel, alaprajzzal vagy metszettel. Az ajánlat a kért kimenetre szól, nem egy közös csomagra.',
-    h1: 'Épületfelmérés a tervezéshez',
+      'Lakások, házak, irodák és üzlethelyiségek 3D lézeres felmérése. Pontfelhő, igény szerint alaprajz, metszet és homlokzati rajz. Kérjen ajánlatot!',
+    imageAlt: '3D épületfelmérés felújításhoz és tervezéshez',
+    h1: '3D épületfelmérés felújításhoz és tervezéshez',
+    lastmod: '2026-11-17',
   },
   building: {
     path: '/epulet-felmeres',
-    title: 'Épületfelmérés tervezéshez | Pontosfelmérés',
+    title: 'Meglévő épület felmérése | Pontosfelmérés',
     description:
-      'Lakás, ház, iroda és kisebb üzlet épületfelmérése a tervezővel egyeztetett kimenettel. Pontfelhő vagy alaprajz csak akkor, ha a feladat kéri.',
+      'Lakás, ház, iroda és kisebb üzlet meglévő állapotának felmérése. A pontfelhő vagy a rajz csak akkor készül, ha a feladat kéri.',
+    imageAlt: 'Meglévő épület felmérése tervezéshez',
     crumb: 'Épületfelmérés',
+    lastmod: '2026-11-17',
   },
   renovation: {
     path: '/felujitas-alapfelmeres',
-    title: 'Felújítás előtti alapfelmérés | Pontosfelmérés',
+    title: 'Felújítás előtti állapotfelmérés | Pontosfelmérés',
     description:
-      'Felújítás és átépítés előtti állapotfelmérés: a meglévő geometria a terv kiinduló adata. Nem statika és nem hatósági záradék.',
+      'Felújítás és átépítés előtt a meglévő geometria a terv kiinduló adata. A felmérés nem statika és nem hatósági záradék.',
+    imageAlt: 'Felújítás előtti állapotfelmérés',
     crumb: 'Felújítás előtt',
+    lastmod: '2026-11-17',
   },
   designers: {
     path: '/tervezoknek',
-    title: 'Felmérés tervezőknek és építészeknek | Pontosfelmérés',
+    title: 'Felmérés építészeknek | Pontosfelmérés',
     description:
-      'Építészeknek és belsőépítészeknek: a felmérés előtt rögzítjük a fájlt, a terjedelmet és a kizárásokat. Az átadás ehhez a listához igazodik.',
+      'Építészeknek és belsőépítészeknek: a fájl, a terjedelem és a kizárások a helyszín előtt rögzülnek. Az átadás ehhez a listához igazodik.',
+    imageAlt: 'Épületfelmérés építészeknek és belsőépítészeknek',
     crumb: 'Tervezőknek',
+    lastmod: '2026-11-17',
   },
   samples: {
     path: '/mintak',
-    title: 'Minta kimenetek: pontfelhő és alaprajz | Pontosfelmérés',
+    title: 'Átadott anyagok: pontfelhő és rajz | Pontosfelmérés',
     description:
-      'Milyen egy pontfelhő, egy 2D alaprajz és egy tervezővel egyeztetett dokumentációs csomag. Tartalmi minta, kitalált referencia nélkül.',
-    crumb: 'Minták',
+      'A pontfelhő, az alaprajz, a metszet és a homlokzati rajz külön kérhető. Azt adjuk át, amit az ajánlatban meghatároztunk.',
+    imageAlt: 'Átadott anyagok: pontfelhő és rajz',
+    crumb: 'Átadott anyagok',
+    lastmod: '2026-11-17',
   },
   process: {
     path: '/folyamat',
-    title: 'Hogyan zajlik az épületfelmérés | Pontosfelmérés',
+    title: 'Az épületfelmérés menete | Pontosfelmérés',
     description:
-      'A terepi felmérés négy lépése: kimenet egyeztetése, helyszíni munka, feldolgozás és átadás a megbeszélt formátumban.',
+      'Négy lépés: a kimenet egyeztetése, a helyszíni munka, a feldolgozás, majd az átadás a megbeszélt formátumban.',
+    imageAlt: 'Az épületfelmérés menete',
     crumb: 'Folyamat',
+    lastmod: '2026-11-17',
   },
   pricing: {
     path: '/arak',
-    title: 'Árazás és ajánlatkérés épületfelméréshez | Pontosfelmérés',
+    title: 'Ajánlat épületfelmérésre | Pontosfelmérés',
     description:
-      'Az épületfelmérés díja a kimenettől, a területtől és a helyszíntől függ. Az oldal nem ad azonnali árat és nem számol automatikusan.',
+      'A díj a kért kimenettől, a területtől és a helyszíntől függ. Az oldal nem ír ki árat, és nem számol automatikusan.',
+    imageAlt: 'Ajánlat épületfelmérésre',
     crumb: 'Árak',
+    lastmod: '2026-11-17',
   },
   faq: {
     path: '/gyik',
-    title: 'Gyakori kérdések az épületfelmérésről | Pontosfelmérés',
+    title: 'Kérdések a meglévő állapotfelmérésről | Pontosfelmérés',
     description:
-      'Válaszok az azonnali árról, a pontosságról, a lakott lakásról, a fájlformátumról és arról, hogy a felmérés nem hatósági záradék.',
+      'Válaszok az árról, a pontosságról, a lakott lakásról és a fájlformátumról. A felmérés nem hatósági dokumentáció.',
+    imageAlt: 'Kérdések a meglévő állapotfelmérésről',
     crumb: 'GYIK',
+    lastmod: '2026-11-17',
   },
   contact: {
     path: '/kapcsolat',
-    title: 'Kapcsolat és ajánlatkérés | Pontosfelmérés',
+    title: 'Ajánlatkérés épületfelmérésre | Pontosfelmérés',
     description:
-      'Kérjen ajánlatot meglévő állapotfelmérésre. Írja meg a települést, az ingatlan típusát és a tervező által kért dokumentációt.',
+      'Írja meg a települést, az ingatlan típusát és a tervező által kért dokumentációt. Az ajánlat a tisztázás után készül.',
+    imageAlt: 'Ajánlatkérés épületfelmérésre',
     crumb: 'Kapcsolat',
+    lastmod: '2026-11-17',
   },
   privacy: {
     path: '/adatvedelem',
     title: 'Adatkezelési tájékoztató | Pontosfelmérés',
     description:
       'Hogyan kezeli a pontosfelmeres.hu az ajánlatkérés adatait. Nincs hírlevél és nincs követőkód.',
+    imageAlt: 'Pontosfelmérés adatkezelési tájékoztató',
     crumb: 'Adatvédelem',
+    lastmod: '2026-11-09',
   },
   impressum: {
     path: '/impresszum',
     title: 'Impresszum | Pontosfelmérés',
     description:
       'A pontosfelmeres.hu üzemeltetője az ADP-TOP Kft. Cégadatok, elérhetőség és a tárhely feltüntetése.',
+    imageAlt: 'Pontosfelmérés impresszum',
     crumb: 'Impresszum',
+    lastmod: '2026-11-09',
   },
   articles: {
     path: '/cikkek',
-    title: 'Cikkek a meglévő állapotfelmérésről | Pontosfelmérés',
+    title: 'Tudnivalók felújítás előtti felméréshez | Pontosfelmérés',
     description:
-      'Mikor kell felmérés felújítás előtt, mire való a pontfelhő, az alaprajz és a BIM, és mit kérjen a tervező a helyszín előtt.',
+      'Mikor kell állapotfelmérés felújítás előtt, mire való a pontfelhő és az alaprajz, és mit egyeztessen a tervező a helyszín előtt.',
+    imageAlt: 'Tudnivalók felújítás előtti felméréshez',
     crumb: 'Tudnivalók',
+    lastmod: '2026-11-09',
   },
   thanks: {
     path: '/koszonjuk',

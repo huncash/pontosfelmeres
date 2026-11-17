@@ -38,6 +38,27 @@ test('a csv pontosvesszős, és a képletet nem hagyja nyersnek', () => {
   assert.match(csv, /igen/);
 });
 
+test('név, e-mail és a felmérendő rész elég, az üres opcionális mező nem hiba', () => {
+  const result = validateLead(
+    {
+      name: 'Teszt Béla',
+      email: 'bela@example.com',
+      comment: 'A földszinti nappalit szeretném felméretni.',
+      consent: 'igen',
+      phone: '',
+      city: '',
+      property_type: '',
+      documentation_type: 'Még nem tudom, ezt szeretném az ajánlat előtt tisztázni',
+    },
+    { fallbackHost: 'pontosfelmeres.hu', referer: '' }
+  );
+  assert.equal(result.ok, true);
+  assert.equal(result.values.phone, '');
+  assert.equal(result.values.city, '');
+  assert.equal(result.values.property_type, '');
+  assert.match(result.values.documentation, /Még nem tudom/);
+});
+
 test('hozzájárulás nélkül nem érvényes a lead', () => {
   const result = validateLead(
     {
@@ -65,6 +86,7 @@ test('a kitöltött csapda mező spam, de a többi adat megmarad', () => {
       property_type: 'Családi ház',
       project_type: 'Bővítés',
       documentation_type: 'Pontfelhő',
+      comment: 'A földszintet szeretném felméretni.',
       consent: 'igen',
       pf_hp: 'http://spam.example',
       utm_campaign: 'tavasz',

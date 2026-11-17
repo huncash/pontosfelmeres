@@ -1,24 +1,28 @@
 const fs = require('fs');
 const path = require('path');
 const { esc, jsonScript, safeEmail, telHref } = require('./util');
+const { metadataOrigin, effectiveRobots, verificationMetas } = require('./seo');
 
 const NAV = [
   ['/epulet-felmeres', 'Épületfelmérés'],
   ['/felujitas-alapfelmeres', 'Felújítás előtt'],
   ['/tervezoknek', 'Tervezőknek'],
-  ['/mintak', 'Minták'],
+  ['/mintak', 'Átadott anyagok'],
   ['/folyamat', 'Folyamat'],
   ['/arak', 'Árak'],
 ];
 
 function organizationLd(config) {
+  const origin = metadataOrigin(config);
   return {
     '@type': 'Organization',
-    '@id': `${config.siteUrl}/#szervezet`,
-    name: config.siteName,
-    url: config.siteUrl,
+    '@id': `${origin}/#szervezet`,
+    name: config.companyLegalName,
+    alternateName: config.siteName,
+    url: `${origin}/`,
     email: safeEmail(config.contactEmail) || undefined,
     telephone: config.contactPhone || undefined,
+    logo: `${origin}/images/adp-top-logo.png`,
   };
 }
 
@@ -29,57 +33,52 @@ function footerLogo() {
   const png = buf.length >= 24 && buf.toString('ascii', 1, 4) === 'PNG';
   const width = png ? buf.readUInt32BE(16) : 120;
   const height = png ? buf.readUInt32BE(20) : 48;
-  return `<img class="footer-logo" src="/images/adp-top-logo.png" width="${width}" height="${height}" alt="ADP-TOP">`;
+  return `<img class="footer-logo" src="/images/adp-top-logo.png" width="${width}" height="${height}" alt="ADP-TOP" loading="lazy" decoding="async">`;
 }
 
-function professionalServiceLd(config) {
+function websiteLd(config) {
+  const origin = metadataOrigin(config);
   return {
-    '@type': 'ProfessionalService',
-    '@id': `${config.siteUrl}/#szolgaltatas`,
+    '@type': 'WebSite',
+    '@id': `${origin}/#weboldal`,
     name: config.siteName,
-    url: config.siteUrl,
-    image: `${config.siteUrl}/images/og.png`,
+    url: `${origin}/`,
+    inLanguage: 'hu',
+    publisher: { '@id': `${origin}/#szervezet` },
+  };
+}
+
+function serviceLd(config) {
+  const origin = metadataOrigin(config);
+  return {
+    '@type': 'Service',
+    '@id': `${origin}/#szolgaltatas`,
+    name: 'Épületfelmérés tervezéshez',
+    serviceType: 'Meglévő állapotfelmérés',
+    url: `${origin}/`,
     description:
-      'Meglévő épületek terepi felmérése tervezéshez használható, előre egyeztetett dokumentációval.',
-    telephone: config.contactPhone || undefined,
-    email: safeEmail(config.contactEmail) || undefined,
+      'Lakások, házak, irodák és üzlethelyiségek 3D lézeres felmérése. Pontfelhő, igény szerint alaprajz, metszet és homlokzati rajz.',
+    provider: { '@id': `${origin}/#szervezet` },
     areaServed: { '@type': 'Country', name: 'Magyarország' },
-    provider: { '@id': `${config.siteUrl}/#szervezet` },
-    knowsAbout: [
-      'épületfelmérés',
-      'meglévő állapotfelmérés',
-      'felújítás előtti felmérés',
-      'alaprajz',
-      'pontfelhő',
-      'terepi felmérés',
-    ],
+    image: `${origin}/images/og.png`,
   };
 }
 
 function breadcrumbLd(config, crumbs) {
+  const origin = metadataOrigin(config);
   return {
     '@type': 'BreadcrumbList',
     itemListElement: crumbs.map((crumb, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       name: crumb.name,
-      item: `${config.siteUrl}${crumb.path}`,
-    })),
-  };
-}
-
-function faqLd(items) {
-  return {
-    '@type': 'FAQPage',
-    mainEntity: items.map((item) => ({
-      '@type': 'Question',
-      name: item.q,
-      acceptedAnswer: { '@type': 'Answer', text: item.a },
+      item: `${origin}${crumb.path}`,
     })),
   };
 }
 
 function articleLd(config, article) {
+  const origin = metadataOrigin(config);
   return {
     '@type': 'Article',
     headline: article.title,
@@ -87,9 +86,10 @@ function articleLd(config, article) {
     inLanguage: 'hu',
     datePublished: article.published,
     dateModified: article.published,
-    mainEntityOfPage: `${config.siteUrl}${article.path}`,
-    author: { '@type': 'Organization', name: config.siteName },
-    publisher: { '@id': `${config.siteUrl}/#szervezet` },
+    mainEntityOfPage: `${origin}${article.path}`,
+    author: { '@id': `${origin}/#szervezet` },
+    publisher: { '@id': `${origin}/#szervezet` },
+    image: `${origin}/images/og.png`,
   };
 }
 
@@ -108,8 +108,13 @@ function layout({
   crumbs = [],
   jsonLd = [],
   ogType = 'website',
+  imageAlt = 'Épületfelmérés a tervezéshez',
 }) {
-  const canonical = `${config.siteUrl}${path}`;
+  const origin = metadataOrigin(config);
+  const canonical = `${origin}${path}`;
+  const robotsValue = effectiveRobots(config, robots);
+  const image = `${origin}/images/og.png`;
+  const verify = verificationMetas(config);
   const phoneHref = telHref(config.contactPhone);
   const email = safeEmail(config.contactEmail);
   const nav = NAV.map(
@@ -133,8 +138,8 @@ function layout({
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}">
-  <meta name="robots" content="${esc(robots)}">
-  <link rel="canonical" href="${esc(canonical)}">
+  <meta name="robots" content="${esc(robotsValue)}">
+  ${verify ? `${verify}\n  ` : ''}<link rel="canonical" href="${esc(canonical)}">
   <link rel="alternate" hreflang="hu" href="${esc(canonical)}">
   <meta name="theme-color" content="#0c4a3e">
   <meta property="og:type" content="${esc(ogType)}">
@@ -143,15 +148,20 @@ function layout({
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(description)}">
   <meta property="og:url" content="${esc(canonical)}">
-  <meta property="og:image" content="${esc(config.siteUrl)}/images/og.png">
+  <meta property="og:image" content="${esc(image)}">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Tervezéshez használható meglévő állapotfelmérés">
+  <meta property="og:image:alt" content="${esc(imageAlt)}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${esc(title)}">
   <meta name="twitter:description" content="${esc(description)}">
-  <meta name="twitter:image" content="${esc(config.siteUrl)}/images/og.png">
+  <meta name="twitter:image" content="${esc(image)}">
+  <meta name="twitter:image:alt" content="${esc(imageAlt)}">
+  <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="48x48" href="/icons/icon-48.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="stylesheet" href="/css/site.css?v=${esc(config.assetVersion)}">
   ${scripts}
@@ -178,7 +188,7 @@ function layout({
         </span>
         <span>
           <strong>pontosfelmérés</strong>
-          <small>tervezéshez rögzített kimenet</small>
+          <small>3D épületfelmérés</small>
         </span>
       </a>
       <input class="nav-toggle" id="nav-toggle" type="checkbox">
@@ -197,7 +207,7 @@ function layout({
     <div class="wrap footer-grid">
       <section>
         <h2>${esc(config.siteName)}</h2>
-        <p>Meglévő épület felmérése, a tervezővel egyeztetett dokumentációval. Az ajánlat a feladat ismeretében készül.</p>
+        <p>Épületek 3D lézeres felmérése felújításhoz és tervezéshez. Pontfelhő, igény szerint alaprajz, metszet és homlokzati rajz.</p>
       </section>
       <section>
         <h2>Szolgáltatás</h2>
@@ -205,9 +215,9 @@ function layout({
           <li><a href="/epulet-felmeres">Épületfelmérés</a></li>
           <li><a href="/felujitas-alapfelmeres">Felújítás előtti alapfelmérés</a></li>
           <li><a href="/tervezoknek">Tervezőknek</a></li>
-          <li><a href="/mintak">Minta kimenetek</a></li>
+          <li><a href="/mintak">Átadott anyagok</a></li>
           <li><a href="/folyamat">A felmérés menete</a></li>
-          <li><a href="/arak">Árazási logika</a></li>
+          <li><a href="/arak">Árak és ajánlatkérés</a></li>
         </ul>
       </section>
       <section>
@@ -259,6 +269,7 @@ function page({ config, nonce, meta, body, crumbs, jsonLd, robots, ogType }) {
     jsonLd: data,
     robots,
     ogType,
+    imageAlt: meta.imageAlt,
   });
 }
 
@@ -266,9 +277,9 @@ module.exports = {
   layout,
   page,
   organizationLd,
-  professionalServiceLd,
+  websiteLd,
+  serviceLd,
   breadcrumbLd,
-  faqLd,
   articleLd,
   graph,
 };

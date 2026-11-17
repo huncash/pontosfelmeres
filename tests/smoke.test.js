@@ -67,15 +67,17 @@ async function text(pathname) {
 test('a főoldal a kért főcímet és a három szolgáltatást mutatja', async () => {
   const { response, body } = await text('/');
   assert.equal(response.status, 200);
-  assert.match(body, /<h1>Épületfelmérés a tervezéshez<\/h1>/);
-  assert.match(body, /A meglévő állapot felmérése, a tervezővel egyeztetett pontfelhővel, alaprajzzal vagy metszettel\./);
+  assert.match(body, /<h1>3D épületfelmérés felújításhoz és tervezéshez<\/h1>/);
+  assert.match(body, /3D lézerszkennerrel/);
+  assert.match(body, /pontokból álló digitális képe/);
   assert.match(body, /href="#ajanlat">Ajánlatot kérek/);
-  assert.match(body, /href="#mit-kapok">Mit kapok\?/);
-  assert.match(body, /Ezek külön kimenetek\./);
-  assert.match(body, /Lakás és családi ház felmérés/);
-  assert.match(body, /Iroda, üzlet és kisebb kereskedelmi egység/);
-  assert.match(body, /Felújítás vagy átépítés előtti állapotfelmérés/);
-  assert.match(body, /Térfelmérés épületről, tervezővel egyeztetett dokumentációval\./);
+  assert.match(body, /href="#mit-kapok">Mit adunk át\?/);
+  assert.match(body, /A megrendelt felmérés és dokumentáció pontos tartalmát az ajánlatban rögzítjük\./);
+  assert.match(body, /<small>3D épületfelmérés<\/small>/);
+  assert.match(body, /Átadott anyagok/);
+  assert.match(body, /Árak és ajánlatkérés/);
+  assert.doesNotMatch(body, /Helyőrző|Ide kerül a jóváhagyott projektábra|Ami nincs a listán|24 órás ajánlatot|tervezéshez rögzített kimenet/);
+  assert.doesNotMatch(body, /kimenet/);
   assert.doesNotMatch(body, /pont\/másodperc|képpont\/másodperc|millió pont|modell-előkészítés|Teszt Anna|másnapi átad/);
   assert.match(body, /2016–2026 \(R\) Minden jog fenntartva\./);
   assert.match(body, /href="\/">pontosfelmeres\.hu/);
@@ -105,7 +107,7 @@ test('a főoldal belső linkjei élnek, és a szöveg a kért keretben marad', a
   const { body } = await text('/');
   const marketing = body.split('id="ajanlat"')[0].replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<[^>]+>/g, ' ');
   const words = marketing.split(/\s+/).filter(Boolean);
-  assert.ok(words.length >= 350 && words.length <= 550, `szószám: ${words.length}`);
+  assert.ok(words.length >= 120 && words.length <= 450, `szószám: ${words.length}`);
   assert.match(body, /action="\/ajanlat"/);
   assert.doesNotMatch(body, /alaprajz, metszet és pontfelhő/);
 });
@@ -146,14 +148,16 @@ test('a nyilvános oldalak válaszolnak', async () => {
   }
 });
 
-test('a sitemap és a robots a nyilvános címeket kezeli', async () => {
+test('fejlesztői módban a sitemap üres, a robots nem hirdet indexelést', async () => {
   const site = await text('/sitemap.xml');
-  assert.match(site.body, /felujitas-alapfelmeres/);
-  assert.match(site.body, /pontfelho-alaprajz-bim/);
+  assert.doesNotMatch(site.body, /<loc>/);
   assert.doesNotMatch(site.body, /\/admin/);
+  assert.doesNotMatch(site.body, /127\.0\.0\.1/);
   const robots = await text('/robots.txt');
-  assert.match(robots.body, /Disallow: \/admin/);
-  assert.match(robots.body, /Sitemap: http:\/\/127\.0\.0\.1:6000\/sitemap\.xml/);
+  assert.match(robots.body, /Disallow: \//);
+  assert.doesNotMatch(robots.body, /Sitemap:/);
+  const home = await text('/');
+  assert.match(home.body, /noindex,nofollow/);
 });
 
 test('az ékezetes felújítási cím átirányít', async () => {
@@ -209,4 +213,23 @@ test('érvényes ajánlatkérés visszaigazolást ad, és az admin CSV-be export
   assert.match(csvBody, /Kampány \/ UTM campaign/);
   assert.match(csvBody, /anna@example.com/);
   assert.match(csvBody, /teszt/);
+
+  const minimal = await fetch(base + '/ajanlat', {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      name: 'Teszt Béla',
+      email: 'bela@example.com',
+      comment: 'A földszinti nappalit szeretném felméretni.',
+      consent: 'igen',
+    }),
+    redirect: 'manual',
+  });
+  assert.equal(minimal.status, 303);
+  const ref = new URL(minimal.headers.get('location'), base).searchParams.get('ref');
+  const detail = await fetch(`${base}/admin/leads/${Number(ref.slice(3))}`, { headers: { cookie } });
+  const detailBody = await detail.text();
+  assert.equal(detail.status, 200);
+  assert.match(detailBody, /bela@example.com/);
+  assert.match(detailBody, /A földszinti nappalit szeretném felméretni/);
 });

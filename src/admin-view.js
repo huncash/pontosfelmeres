@@ -60,7 +60,7 @@ function listPage({ rows, q, status, includeSpam, csrf }) {
                 <td>${esc(formatWhen(row.submitted_at))}</td>
                 <td>${esc(row.name)}<br><span class="muted">${esc(row.city)}</span></td>
                 <td>${esc(row.email)}<br>${esc(row.phone)}</td>
-                <td>${esc(row.project_type)}<br><span class="muted">${esc(row.property_type)}</span></td>
+                <td>${esc(row.project_type || row.comment || '')}<br><span class="muted">${esc(row.property_type)}</span></td>
                 <td>${esc(STATUS_LABEL[row.status] || row.status)}</td>
               </tr>`
             )
@@ -136,8 +136,8 @@ function detailPage({ lead, csrf }) {
         )
         .join('')}
     </dl>
-    <h2>Megjegyzés</h2>
-    <div class="prewrap">${esc(lead.comment || 'Nincs megjegyzés.')}</div>
+    <h2>Mit szeretne felméretni?</h2>
+    <div class="prewrap">${esc(lead.comment || 'Nincs megadva.')}</div>
     <form class="status-form" method="post" action="/admin/leads/${lead.id}/status">
       <input type="hidden" name="csrf" value="${esc(csrf)}">
       <label for="status">Státusz</label>

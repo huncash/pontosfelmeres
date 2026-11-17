@@ -123,6 +123,7 @@ function openDatabase(file) {
             OR phone LIKE ? ESCAPE '\\'
             OR city LIKE ? ESCAPE '\\'
             OR project_type LIKE ? ESCAPE '\\'
+            OR comment LIKE ? ESCAPE '\\'
           )
         ORDER BY id DESC
         LIMIT 500
@@ -132,6 +133,7 @@ function openDatabase(file) {
         status,
         status,
         query,
+        like,
         like,
         like,
         like,

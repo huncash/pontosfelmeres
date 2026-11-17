@@ -105,8 +105,16 @@ function loadConfig() {
       !PLACEHOLDER_TOKENS.has(adminToken.toLowerCase()),
     sessionSecret,
     retentionMonths: Number.parseInt(env('RETENTION_MONTHS', '24'), 10) || 24,
-    assetVersion: '5',
+    assetVersion: '7',
+    googleSiteVerification: verificationToken(env('GOOGLE_SITE_VERIFICATION', '')),
+    bingSiteVerification: verificationToken(env('BING_SITE_VERIFICATION', '')),
   };
+}
+
+function verificationToken(value) {
+  const token = String(value || '').trim();
+  if (!/^[A-Za-z0-9_-]{8,128}$/.test(token)) return '';
+  return token;
 }
 
 module.exports = { loadConfig, loadEnvFile };

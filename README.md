@@ -138,7 +138,19 @@ A lista szűrhető, a státusz módosítható, a CSV a `/admin/export.csv` címe
 
 ## SEO
 
-Minden nyilvános oldal saját title és description szöveget kap, Open Graph és Twitter Card tagekkel. A `sitemap.xml` és a `robots.txt` a `SITE_URL` alapján készül. Az admin és a visszaigazoló oldal nincs a térképen. A főoldalon Organization, ProfessionalService és FAQPage, a cikkeken Article séma van.
+Minden indexelhető oldal saját title és description szöveget kap. A canonical, a megosztási cím és a sitemap csak akkor a `https://pontosfelmeres.hu` cím, ha a `NODE_ENV=production` és a `SITE_URL` pontosan ez a https cím. Fejlesztői és tesztüzemben az oldal `noindex`, a sitemap üres, a robots pedig mindent tilt. A lekérdezési paraméterek nem kerülnek a canonical címbe. A `www` alatti kérés 301-gyel az apexre megy.
+
+A sitemapbe csak a nyilvános, 200-as oldalak kerülnek, abszolút https címmel és a tartalom dátumával. Az admin, a visszaigazolás és a healthz kimarad. A `robots.txt` nem helyettesíti a belépést.
+
+A strukturált adat WebSite, Organization, Service, BreadcrumbList és a cikkeken Article. A szervezet az ADP-TOP Kft., a szolgáltatás márkaneve a Pontosfelmérés. Nincs értékelés, nyitvatartás, cím vagy FAQ-séma. A telefonidő nem ügyfélfogadás.
+
+A fejlécjelből készült favicon és a 1200×630 megosztási kép jóváhagyásra vár. Az ADP-TOP lábléclogo nem a szolgáltatás ikonja.
+
+Keresőfiókok, tulajdonosi lépés, kódból nem igazolható:
+
+- Google Search Console: DNS TXT a domain tulajdonhoz, vagy a kapott tokent a `GOOGLE_SITE_VERIFICATION` mezőbe. Utána a sitemap beküldése és néhány URL vizsgálata. Meglévő tokent nem törlünk.
+- Bing Webmaster Tools: ugyanígy DNS vagy a `BING_SITE_VERIFICATION` mező. IndexNow nincs bekötve, és nem küldünk automatikus értesítést.
+- Google Cégprofil: a meglévő vrgo.hu vállalkozásprofilhoz tartozik. Ehhez a domainhez külön profilt nem nyitunk, és a profil fő weboldalát nem írjuk át. Térkép-link csak ellenőrzött cím esetén kerülhet a kapcsolatoldalra.
 
 ## Amit az alkalmazás szándékosan nem tud
 
@@ -153,5 +165,6 @@ Minden nyilvános oldal saját title és description szöveget kap, Open Graph �
 - Valódi, figyelt e-mail cím és SMTP.
 - Egyedi admin jelszó és, ha kell, külön `SESSION_SECRET`.
 - `HOSTING_PROVIDER`, `HOSTING_ADDRESS`, `HOSTING_EMAIL` az impresszumban.
-- `SITE_URL` a végleges https cím.
+- `NODE_ENV=production` és `SITE_URL=https://pontosfelmeres.hu`, különben az oldal nem indexelhető.
+- `SITE_URL` a végleges https cím, port és localhost nélkül.
 - A tárhely és az adatkezelési szöveg átnézése, ha a levelező szolgáltató az EGT-n kívül dolgozik.

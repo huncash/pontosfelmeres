@@ -58,25 +58,24 @@ function renderLeadForm({ values = {}, errors = null } = {}) {
     <div class="form-grid">
       ${textField({ name: 'name', label: 'Név', value: values.name, errors, required: true, max: 100, autocomplete: 'name' })}
       ${textField({ name: 'email', label: 'E-mail', value: values.email, errors, type: 'email', required: true, max: 160, autocomplete: 'email' })}
-      ${textField({ name: 'phone', label: 'Telefon', value: values.phone, errors, type: 'tel', required: true, max: 40, autocomplete: 'tel' })}
-      ${textField({ name: 'city', label: 'Település', value: values.city, errors, required: true, max: 80, autocomplete: 'address-level2' })}
-      ${selectField({ name: 'property_type', label: 'Ingatlan típusa', options: PROPERTY_TYPES, value: values.property_type, errors })}
-      ${textField({ name: 'floor_area', label: 'Becsült alapterület', value: values.floor_area, errors, max: 80, hint: 'Elég a nagyságrend, például 74 m² vagy ház, két szint.' })}
-      ${selectField({ name: 'project_type', label: 'Milyen munkát tervez?', options: PROJECT_TYPES, value: values.project_type, errors, span: true })}
-      ${selectField({ name: 'documentation_type', label: 'Milyen dokumentációt kér a tervezője?', options: DOC_TYPES, value: values.documentation_type, errors, span: true })}
       <div class="field span-2">
-        <label for="documentation_note">A dokumentáció részletezése, ha már tudja</label>
-        <textarea id="documentation_note" name="documentation_note" maxlength="1000" rows="3">${esc(values.documentation_note || '')}</textarea>
-        ${fieldError(errors, 'documentation_note')}
-      </div>
-      ${textField({ name: 'designer', label: 'Tervező neve vagy elérhetősége, ha már van', value: values.designer, errors, max: 160, span: true })}
-      ${textField({ name: 'deadline', label: 'Kívánt határidő', value: values.deadline, errors, max: 120, hint: 'Ha még nincs dátum, írja be, hogy rugalmas.' })}
-      <div class="field span-2">
-        <label for="comment">Megjegyzés</label>
-        <textarea id="comment" name="comment" maxlength="4000" rows="5">${esc(values.comment || '')}</textarea>
-        <p class="hint">Ide kerülhet a cím, a szintszám, a megközelítés és az, ami a tervezés szempontjából számít.</p>
+        <label for="comment">Mit szeretne felméretni? <span class="req">kötelező</span></label>
+        <textarea id="comment" name="comment" maxlength="400" rows="3" required${errors && errors.comment ? ' aria-invalid="true" aria-describedby="comment-error"' : ''}>${esc(values.comment || '')}</textarea>
+        <p class="hint">Például: a lakás nappalija és konyhája, vagy egy családi ház két szintje.</p>
         ${fieldError(errors, 'comment')}
       </div>
+      <details class="form-more">
+        <summary>További adatok, ha már tudja</summary>
+        <div class="form-grid">
+          ${textField({ name: 'phone', label: 'Telefon', value: values.phone, errors, type: 'tel', max: 40, autocomplete: 'tel' })}
+          ${textField({ name: 'city', label: 'Település', value: values.city, errors, max: 80, autocomplete: 'address-level2' })}
+          ${selectField({ name: 'property_type', label: 'Ingatlan típusa', options: PROPERTY_TYPES, value: values.property_type, errors, required: false })}
+          ${textField({ name: 'floor_area', label: 'Becsült alapterület', value: values.floor_area, errors, max: 80, hint: 'Elég a nagyságrend, például 74 m² vagy ház, két szint.' })}
+          ${selectField({ name: 'project_type', label: 'Tervezett munka', options: PROJECT_TYPES, value: values.project_type, errors, required: false })}
+          ${selectField({ name: 'documentation_type', label: 'Kért dokumentáció', options: DOC_TYPES, value: values.documentation_type, errors, required: false })}
+          ${textField({ name: 'deadline', label: 'Határidő', value: values.deadline, errors, max: 120, hint: 'Ha még nincs dátum, írja be, hogy rugalmas.' })}
+        </div>
+      </details>
       <div class="field span-2 consent">
         <label for="consent">
           <input id="consent" name="consent" type="checkbox" value="igen"${values.consent ? ' checked' : ''}${errors && errors.consent ? ' aria-invalid="true" aria-describedby="consent-error"' : ''}>
@@ -87,7 +86,7 @@ function renderLeadForm({ values = {}, errors = null } = {}) {
     </div>
     <div class="form-actions">
       <button class="btn" type="submit">Ajánlatkérés elküldése</button>
-      <p>Az elküldés még nem ajánlat és nem szerződés. Ha a kimenethez kevés az adat, előbb visszakérdezünk.</p>
+      <p>Az elküldés ajánlatkérés. Még nem szerződés.</p>
     </div>
   </form>`;
 }
@@ -95,12 +94,12 @@ function renderLeadForm({ values = {}, errors = null } = {}) {
 function ctaBand() {
   return `<aside class="cta-band">
     <div>
-      <h2>Kérjen ajánlatot a konkrét kimenetre</h2>
-      <p>Írja meg a települést, az ingatlan típusát és azt, amit a tervező kér. Ha ez még nincs tisztázva, az ajánlat előtt ezt egyeztetjük. Az űrlap nem ad azonnali árat.</p>
+      <h2>Kérjen ajánlatot</h2>
+      <p>Írja meg, mit szeretne felméretni. A pontos anyagot az ajánlatban rögzítjük.</p>
     </div>
     <div class="actions">
       <a class="btn" href="/kapcsolat#ajanlat">Ajánlatot kérek</a>
-      <a class="btn btn-ghost" href="/#mit-kapok">Mit kapok?</a>
+      <a class="btn btn-ghost" href="/#mit-kapok">Mit adunk át?</a>
     </div>
   </aside>`;
 }

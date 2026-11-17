@@ -20,13 +20,13 @@ const {
 const {
   page,
   organizationLd,
-  professionalServiceLd,
-  faqLd,
+  websiteLd,
+  serviceLd,
   articleLd,
   graph,
 } = require('./layout');
+const { robotsTxt, metadataOrigin, isIndexable } = require('./seo');
 const { renderLeadForm } = require('./form');
-const { FAQ } = require('./content/faq');
 const { ARTICLES, articleBySlug } = require('./content/articles');
 const pages = require('./content/pages');
 const adminView = require('./admin-view');
@@ -44,6 +44,8 @@ function siteHost(config) {
 
 function send(res, status, html) {
   res.status(status);
+  const robots = html.match(/<meta name="robots" content="([^"]*)"/);
+  if (robots) res.setHeader('X-Robots-Tag', robots[1]);
   res.setHeader('Cache-Control', status === 200 ? 'no-cache' : 'no-store');
   res.type('html').send(html);
 }
@@ -79,6 +81,13 @@ function createApp(options = {}) {
       'Content-Security-Policy',
       `default-src 'self'; script-src 'self' 'nonce-${nonce}'; style-src 'self'; img-src 'self' data:; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'`
     );
+    const host = String(req.hostname || '').toLowerCase();
+    if (host === 'www.pontosfelmeres.hu') {
+      let targetPath = req.path;
+      if (targetPath.length > 1 && targetPath.endsWith('/')) targetPath = targetPath.slice(0, -1);
+      const query = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+      return res.redirect(301, `https://pontosfelmeres.hu${targetPath}${query}`);
+    }
     if (req.method === 'GET' && req.path.length > 1 && req.path.endsWith('/')) {
       return res.redirect(301, req.path.slice(0, -1) + req.url.slice(req.path.length));
     }
@@ -138,32 +147,33 @@ function createApp(options = {}) {
   });
 
   app.get('/robots.txt', (req, res) => {
-    res.type('text/plain').send(
-      `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /koszonjuk\n\nSitemap: ${config.siteUrl}/sitemap.xml\n`
-    );
+    res.type('text/plain').send(robotsTxt(config));
   });
 
   app.get('/sitemap.xml', (req, res) => {
-    const urls = [
-      pages.PAGES.home,
-      pages.PAGES.building,
-      pages.PAGES.renovation,
-      pages.PAGES.designers,
-      pages.PAGES.samples,
-      pages.PAGES.process,
-      pages.PAGES.pricing,
-      pages.PAGES.faq,
-      pages.PAGES.contact,
-      pages.PAGES.privacy,
-      pages.PAGES.impressum,
-      pages.PAGES.articles,
-      ...ARTICLES,
-    ];
+    const origin = metadataOrigin(config);
+    const urls = isIndexable(config)
+      ? [
+          pages.PAGES.home,
+          pages.PAGES.building,
+          pages.PAGES.renovation,
+          pages.PAGES.designers,
+          pages.PAGES.samples,
+          pages.PAGES.process,
+          pages.PAGES.pricing,
+          pages.PAGES.faq,
+          pages.PAGES.contact,
+          pages.PAGES.privacy,
+          pages.PAGES.impressum,
+          pages.PAGES.articles,
+          ...ARTICLES,
+        ]
+      : [];
     const body = urls
       .map((item) => {
-        const loc = `${config.siteUrl}${item.path}`;
-        const lastmod = item.published || '2026-11-09';
-        return `  <url><loc>${loc}</loc><lastmod>${lastmod}</lastmod></url>`;
+        const loc = `${origin}${item.path}`;
+        const lastmod = item.lastmod || item.published;
+        return `  <url><loc>${esc(loc)}</loc><lastmod>${esc(lastmod)}</lastmod></url>`;
       })
       .join('\n');
     res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`);
@@ -176,7 +186,7 @@ function createApp(options = {}) {
       nonce: res.locals.nonce,
       meta: pages.PAGES.home,
       body,
-      jsonLd: [graph([organizationLd(config), professionalServiceLd(config)])],
+      jsonLd: [graph([websiteLd(config), organizationLd(config), serviceLd(config)])],
     }));
   });
 
@@ -190,7 +200,13 @@ function createApp(options = {}) {
   ];
   for (const [route, meta, render] of simple) {
     app.get(route, (req, res) => {
-      send(res, 200, page({ config, nonce: res.locals.nonce, meta, body: render() }));
+      send(res, 200, page({
+        config,
+        nonce: res.locals.nonce,
+        meta,
+        body: render(),
+        jsonLd: [graph([organizationLd(config), serviceLd(config)])],
+      }));
     });
   }
 
@@ -204,7 +220,6 @@ function createApp(options = {}) {
       nonce: res.locals.nonce,
       meta: pages.PAGES.faq,
       body: pages.renderFaqPage(),
-      jsonLd: [graph([faqLd(FAQ)])],
     }));
   });
 
@@ -214,7 +229,7 @@ function createApp(options = {}) {
       nonce: res.locals.nonce,
       meta: pages.PAGES.contact,
       body: pages.renderContact({ formHtml: renderLeadForm(), config }),
-      jsonLd: [graph([professionalServiceLd(config)])],
+      jsonLd: [graph([organizationLd(config), serviceLd(config)])],
     }));
   });
 
@@ -265,7 +280,9 @@ function createApp(options = {}) {
         path: article.path,
         title: `${article.title} | Pontosfelmérés`,
         description: article.description,
+        imageAlt: article.title,
         crumb: article.title,
+        lastmod: article.published,
       },
       body: pages.renderArticle(article),
       crumbs: [

@@ -18,7 +18,7 @@ function leadText(config, lead, id) {
     `Kért dokumentáció: ${lead.documentation}`,
     `Tervező: ${lead.designer || 'nincs megadva'}`,
     `Kívánt határidő: ${lead.deadline || 'nincs megadva'}`,
-    `Megjegyzés: ${lead.comment || 'nincs'}`,
+    `Mit szeretne felméretni: ${lead.comment || 'nincs'}`,
     '',
     `Forrásdomain: ${lead.source_domain}`,
     `Forrás URL: ${lead.source_url || 'nincs'}`,
@@ -27,7 +27,7 @@ function leadText(config, lead, id) {
     `UTM term / content: ${lead.utm_term || '-'} / ${lead.utm_content || '-'}`,
     `Státusz: ${STATUS_LABEL[lead.status] || lead.status}`,
     '',
-    'Az oldal nem készített árat. Az ajánlat a kimenet és a helyszín tisztázása után adható.',
+    'Az ajánlat a felmérendő épületrész és a kért anyag tisztázása után adható.',
   ];
   return lines.join('\n');
 }
@@ -39,7 +39,7 @@ function customerText(config, lead, id) {
     'Rögzítettük az ajánlatkérését a meglévő állapotfelmérésről.',
     `Hivatkozási szám: ${refCode(id)}`,
     '',
-    'Átnézzük a megadott adatokat. Ha a tervezői kimenethez vagy a helyszínhez hiányzik valami, visszakérdezünk. Írásos ajánlatot ezután küldünk. Az űrlap nem számít automatikus árat, és nem keletkezik belőle szerződés.',
+    'Átnézzük a megadott adatokat, és írásos ajánlatot küldünk. Az elküldés még nem szerződés.',
     '',
     `Ha néhány munkanapon belül nem jelentkezünk, írjon a ${config.contactEmail} címre, és tüntesse fel a hivatkozási számot.`,
     '',

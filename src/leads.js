@@ -20,6 +20,7 @@ const DOC_TYPES = [
   'Pontfelhő',
   '2D alaprajz',
   'Alaprajz és metszet',
+  'Homlokzati rajz',
   'Tervezővel egyeztetett dokumentációs csomag',
   'Más, a megjegyzésben leírom',
 ];
@@ -96,20 +97,23 @@ function validateLead(body, { fallbackHost, referer }) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 160) {
     errors.email = 'Adjon meg egy használható e-mail címet.';
   }
-  const digits = phone.replace(/\D/g, '');
-  if (!/^[0-9+()/\-\s]+$/.test(phone) || digits.length < 6 || digits.length > 15) {
-    errors.phone = 'Adjon meg egy visszahívható telefonszámot.';
+  if (comment.length < 8) errors.comment = 'Írja meg röviden, mit szeretne felméretni.';
+  requireMax(errors, 'comment', comment, 400, 'felmérendő rész');
+  if (phone) {
+    const digits = phone.replace(/\D/g, '');
+    if (!/^[0-9+()/\-\s]+$/.test(phone) || digits.length < 6 || digits.length > 15) {
+      errors.phone = 'Adjon meg egy visszahívható telefonszámot, vagy hagyja üresen.';
+    }
   }
-  if (city.length < 2) errors.city = 'Adja meg a települést.';
+  if (city && city.length < 2) errors.city = 'A település túl rövid.';
   requireMax(errors, 'city', city, 80, 'település');
-  if (!PROPERTY_TYPES.includes(propertyType)) errors.property_type = 'Válassza ki az ingatlan típusát.';
-  if (!PROJECT_TYPES.includes(projectType)) errors.project_type = 'Válassza ki, milyen munkát tervez.';
-  if (!DOC_TYPES.includes(docType)) errors.documentation_type = 'Válassza ki, milyen dokumentációt kér a tervező.';
+  if (propertyType && !PROPERTY_TYPES.includes(propertyType)) errors.property_type = 'Válassza ki az ingatlan típusát.';
+  if (projectType && !PROJECT_TYPES.includes(projectType)) errors.project_type = 'Válassza ki a tervezett munkát.';
+  if (docType && !DOC_TYPES.includes(docType)) errors.documentation_type = 'Válassza ki a kért dokumentációt, vagy a „Még nem tudom” lehetőséget.';
   requireMax(errors, 'floor_area', floorArea, 80, 'alapterület');
   requireMax(errors, 'documentation_note', docNote, 1000, 'dokumentációs megjegyzés');
   requireMax(errors, 'designer', designer, 160, 'tervező');
   requireMax(errors, 'deadline', deadline, 120, 'határidő');
-  requireMax(errors, 'comment', comment, 4000, 'megjegyzés');
   if (!consent) errors.consent = 'Az ajánlatkéréshez el kell fogadnia az adatkezelési tájékoztatót.';
 
   const refererUrl = cleanUrl(referer);
